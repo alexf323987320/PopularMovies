@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context="com.example.alex.popularmovies.DetailActivity">
+
+            <TextView
+                android:id="@+id/original_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:gravity="center_vertical"
+                android:paddingBottom="@dimen/big_margin"
+                android:paddingTop="@dimen/big_margin"
+                android:paddingStart="@dimen/default_margin"
+                android:paddingEnd="@dimen/default_margin"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Original title" />
+
+            <ImageView
+                android:id="@+id/thumbnail_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                android:contentDescription="@string/movies_thumbnail_descriptor"
+                android:scaleType="centerInside"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/original_title_tv"
+                android:background="@android:color/darker_gray"
+                tools:layout_height="150dp"
+                tools:layout_width="100dp" />
+
+            <ProgressBar
+                android:id="@+id/progress_bar_pb"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/original_title_tv" />
+
+            <android.support.constraint.Barrier
+                android:id="@+id/vertical_barrier"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="thumbnail_iv,progress_bar_pb" />
+
+            <TextView
+                android:id="@+id/release_date_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginStart="@dimen/big_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/vertical_barrier"
+                app:layout_constraintTop_toBottomOf="@+id/original_title_tv"
+                tools:text="2018" />
+
+            <TextView
+                android:id="@+id/vote_average_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/default_margin"
+                android:layout_marginTop="@dimen/default_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/release_date_tv"
+                app:layout_constraintTop_toBottomOf="@+id/release_date_tv"
+                tools:text="Vote" />
+
+            <android.support.constraint.Barrier
+                android:id="@+id/horizontal_barrier"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="thumbnail_iv,vote_average_tv" />
+
+            <TextView
+                android:id="@+id/overview_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/horizontal_barrier"
+                tools:text="Overview" />
+
+            <View
+                android:id="@+id/line_v"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="@dimen/default_margin"
+                android:background="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/overview_tv" />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</layout>

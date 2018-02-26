@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Popular movies</string>
+    <string name="movies_thumbnail_descriptor">Movie\'s thumbnail</string>
+    <string name="no_internet_connection">No internet connection!</string>
+
+    <string name="menu_item_refresh">Refresh</string>
+    <string name="menu_item_sort_order">Sort order</string>
+
+    <string name="sort_by_popular">By popular</string>
+    <string name="sort_by_top_rated">Top rated</string>
+
+    <string name="parcel_key_movies">key_movies</string>
+    <string name="parcel_key_movie">key_movie</string>
+
+    <string name="detail_activity_title">Movie details</string>
+    <string name="error_detail_activity">No data to show!</string>
+</resources>

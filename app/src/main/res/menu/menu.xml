@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_refresh"
+        android:title="@string/menu_item_refresh"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/item_sort_order"
+        app:actionViewClass="android.widget.Spinner"
+        android:title="@string/menu_item_sort_order"
+        app:showAsAction="always" />
+</menu>
