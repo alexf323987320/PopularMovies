@@ -51,8 +51,8 @@
 
             <android.support.constraint.Barrier
                 android:id="@+id/vertical_barrier"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
+                android:layout_width="@dimen/barrier_width"
+                android:layout_height="@dimen/barrier_width"
                 app:barrierDirection="end"
                 app:constraint_referenced_ids="thumbnail_iv,progress_bar_pb" />
 
@@ -82,8 +82,8 @@
 
             <android.support.constraint.Barrier
                 android:id="@+id/horizontal_barrier"
-                android:layout_width="10dp"
-                android:layout_height="10dp"
+                android:layout_width="@dimen/barrier_width"
+                android:layout_height="@dimen/barrier_width"
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="thumbnail_iv,vote_average_tv" />
 

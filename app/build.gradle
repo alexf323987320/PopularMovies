@@ -19,6 +19,9 @@ android {
     dataBinding {
         enabled = true
     }
+    buildTypes.each{
+        it.buildConfigField "String", "MOVIEDB_API_KEY", MOVIEDB_API_KEY
+    }
 }
 
 dependencies {
@@ -28,4 +31,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     compile 'com.google.code.gson:gson:2.8.2'
+    compile "io.reactivex.rxjava2:rxjava:2.1.10"
 }

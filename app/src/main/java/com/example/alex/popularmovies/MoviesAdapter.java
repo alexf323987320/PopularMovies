@@ -51,7 +51,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 holder.progressBar.setVisibility(View.INVISIBLE);
             }
         });
-        //holder.imageView.setImageResource(R.mipmap.ic_launcher);
     }
 
     @Override

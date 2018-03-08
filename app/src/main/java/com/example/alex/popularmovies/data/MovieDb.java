@@ -1,8 +1,10 @@
 package com.example.alex.popularmovies.data;
 
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.Nullable;
 
+import com.example.alex.popularmovies.BuildConfig;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -26,7 +28,7 @@ public class MovieDb {
         final String POPULAR_SEGMENT = "popular";
         final String TOP_RATED_SEGMENT = "top_rated";
         final String PARAM_KEY_API_KEY = "api_key";
-        final String API_KEY = "INSERT_YOUR_KEY_HERE";
+        final String API_KEY = BuildConfig.MOVIEDB_API_KEY;
 
         //Forming proper URL
         Uri uri = Uri.parse(BASE_URL).buildUpon().
