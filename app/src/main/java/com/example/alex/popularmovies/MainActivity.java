@@ -1,10 +1,13 @@
 package com.example.alex.popularmovies;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -20,13 +23,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.example.alex.popularmovies.data.Movie;
 import com.example.alex.popularmovies.data.MovieDb;
 import com.example.alex.popularmovies.data.Prefs;
 
 import java.util.ArrayList;
+
+import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
 
     private final int MOVIES_LOADER_ID = 0;
     private MoviesLoaderCallbacks mMoviesLoaderCallbacks;
+
+    private BroadcastReceiver mConnectionReceiver;
+    private Boolean mConnectionReceiverWasCalled = false;
 
     private class MoviesLoaderCallbacks implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
 
@@ -85,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
         protected void onForceLoad() {
             Log.d(TAG, "onForceLoad() called - mForceLoadingStarted = " + mForceLoadingStarted);
             if (!mForceLoadingStarted) {
-                super.onForceLoad();
                 mForceLoadingStarted = true;
+                super.onForceLoad();
             }
         }
 
@@ -94,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         public ArrayList<Movie> loadInBackground() {
             try {
                 Log.d(TAG, "loadInBackground() called - before sleep");
-                Thread.sleep(7000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -115,17 +122,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setSupportActionBar(findViewById(R.id.toolbar));
+
         mMoviesRv = findViewById(R.id.movies_rv);
-        mProgressPar = findViewById(R.id.progress_bar_pb);
+        mProgressPar = findViewById(R.id.progress_bar);
         mMoviesLoaderCallbacks = new MoviesLoaderCallbacks();
 
-        if (savedInstanceState != null) {
-            getSupportLoaderManager().initLoader(MOVIES_LOADER_ID, null, mMoviesLoaderCallbacks);
-        } else {
-            if (isConnected()) {
-                forceLoadMoviesLoader();
-            }
+        getSupportLoaderManager().initLoader(MOVIES_LOADER_ID, null, mMoviesLoaderCallbacks);
+        if (savedInstanceState == null) {
+            forceLoadMoviesLoader();
         }
+
+        //broadcast receiver to inform about internet connection
+        mConnectionReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //skip informing on receiver creation
+                //if otherNetwork <> null it means it's a attempt to connect, so no need to inform
+                if (mConnectionReceiverWasCalled && intent.getParcelableExtra("otherNetwork") == null) {
+                    isConnected(true, true);
+                } else {
+                    mConnectionReceiverWasCalled = true;
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(CONNECTIVITY_ACTION);
+        registerReceiver(mConnectionReceiver, intentFilter);
     }
 
     private void setupRecyclerView() {
@@ -135,14 +157,11 @@ public class MainActivity extends AppCompatActivity {
         MoviesAdapter adapter = (MoviesAdapter) mMoviesRv.getAdapter();
         //If adapter is null this is first initialization, else we should update only data
         if (adapter == null) {
-            MoviesAdapter moviesAdapter = new MoviesAdapter(this, mMovies, new MoviesAdapter.OnClickListener() {
-                @Override
-                public void OnClick(Movie movie) {
-                    Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+            MoviesAdapter moviesAdapter = new MoviesAdapter(this, mMovies, movie -> {
+                    Intent intent = new Intent(this, DetailActivity.class);
                     intent.putExtra(getString(R.string.parcel_key_movie), movie);
                     startActivity(intent);
-                }
-            });
+                });
             int columnsCount = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT ? PORTRAIT_COLUMNS_COUNT: LANDSCAPE_COLUMNS_COUNT;
             mMoviesRv.setLayoutManager(new GridLayoutManager(this, columnsCount));
             mMoviesRv.setAdapter(moviesAdapter);
@@ -151,14 +170,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isConnected() {
-        boolean result = false;
+    private boolean isConnected(boolean showPositive, boolean showNegative) {
+        boolean result;
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         if (cm == null) return false;
         NetworkInfo ni = cm.getActiveNetworkInfo();
         result = ni != null && ni.isConnected();
-        if (!result) {
-            Toast.makeText(this, getString(R.string.no_internet_connection), Toast.LENGTH_LONG).show();
+        if (!result && showNegative) {
+                Snackbar sb = Snackbar.make(findViewById(R.id.constraint_layout), R.string.no_internet_connection, Snackbar.LENGTH_LONG);
+                sb.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                sb.show();
+        }
+        if (result && showPositive) {
+            Snackbar sb = Snackbar.make(findViewById(R.id.constraint_layout), R.string.internet_connection_restored, Snackbar.LENGTH_LONG);
+            sb.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+            sb.show();
         }
         return result;
     }
@@ -166,7 +192,8 @@ public class MainActivity extends AppCompatActivity {
     //restores spinner position according prefs
     private void restoreSpinnerPosition(Spinner spinner){
         int spinnerPosition;
-        ArrayAdapter adapter = (ArrayAdapter) spinner.getAdapter();
+        @SuppressWarnings("unchecked")
+        ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinner.getAdapter();
         if (Prefs.getSortOrder(this) == MovieDb.SORT_BY_POPULAR) {
             spinnerPosition = adapter.getPosition(getString(R.string.sort_by_popular));
         } else {
@@ -205,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                     sortOrder = MovieDb.SORT_BY_TOP_RATED;
                 }
                 if (Prefs.getSortOrder(MainActivity.this) != sortOrder) {
-                    if (isConnected()) {
+                    if (isConnected(false, true)) {
                         Prefs.setSortOrder(MainActivity.this, sortOrder);
                         forceLoadMoviesLoader();
                     } else {
@@ -225,20 +252,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_refresh:
-                if (isConnected()) {
-                    forceLoadMoviesLoader();
-                }
+                forceLoadMoviesLoader();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void forceLoadMoviesLoader(){
+        if (!isConnected(false, true)) return;
         mProgressPar.setVisibility(View.VISIBLE);
         Loader loader = getSupportLoaderManager().getLoader(MOVIES_LOADER_ID);
-        if (loader == null) {
-            loader = getSupportLoaderManager().initLoader(MOVIES_LOADER_ID, null, mMoviesLoaderCallbacks);
-        }
         loader.forceLoad();
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mConnectionReceiver);
+        super.onDestroy();
     }
 }

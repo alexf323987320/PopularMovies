@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
@@ -22,6 +23,10 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+
+        setSupportActionBar(findViewById(R.id.toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra(getString(R.string.parcel_key_movie));
         if (movie == null) closeWithError();
@@ -37,12 +42,12 @@ public class DetailActivity extends AppCompatActivity {
         Picasso.with(this).load(movie.getThumbnail()).into(mBinding.thumbnailIv, new Callback() {
             @Override
             public void onSuccess() {
-                mBinding.progressBarPb.setVisibility(View.INVISIBLE);
+                mBinding.progressBar.setVisibility(View.INVISIBLE);
             }
 
             @Override
             public void onError() {
-                mBinding.progressBarPb.setVisibility(View.INVISIBLE);
+                mBinding.progressBar.setVisibility(View.INVISIBLE);
             }
         });
         mBinding.originalTitleTv.setText(movie.getOriginalTitle());

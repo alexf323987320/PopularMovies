@@ -71,7 +71,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         public MoviesViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image_iv);
-            progressBar = itemView.findViewById(R.id.progress_bar_pb);
+            progressBar = itemView.findViewById(R.id.progress_bar);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

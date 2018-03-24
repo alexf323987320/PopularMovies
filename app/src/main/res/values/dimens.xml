@@ -6,4 +6,5 @@
     <dimen name="empty_iv_height">150dp</dimen>
     <dimen name="barrier_width">10dp</dimen>
     <dimen name="drop_down_padding">10dp</dimen>
+    <dimen name="app_bar_elevation">4dp</dimen>
 </resources>

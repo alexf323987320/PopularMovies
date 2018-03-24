@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/popular"
+        android:icon="@drawable/ic_whatshot_black_24dp"
+        android:title="@string/nav_popular" />
+    <item
+        android:id="@+id/top_rated"
+        android:icon="@drawable/ic_folder_special_black_24dp"
+        android:title="@string/nav_top_rated" />
+    <item
+        android:id="@+id/favorite"
+        android:icon="@drawable/ic_favorite_border_black_24dp"
+        android:title="@string/nav_favorite" />
+</menu>
