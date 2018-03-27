@@ -8,37 +8,37 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.example.alex.popularmovies.data.MovieJson;
-import com.example.alex.popularmovies.data.MoviesJson;
+import com.example.alex.popularmovies.data.TrailerJson;
+import com.example.alex.popularmovies.data.TrailersJson;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
+public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.TrailerViewHolder> {
 
-    private MoviesJson mMovies;
+    private TrailersJson mTrailers;
     private Context mContext;
     private OnClickListener mOnClickListener;
 
     public interface OnClickListener {
-        void OnClick(MovieJson movie);
+        void OnClick(TrailerJson trailer);
     }
 
-    public MoviesAdapter(Context context, MoviesJson movies, OnClickListener onClickListener) {
+    public TrailersAdapter(Context context, TrailersJson trailers, OnClickListener onClickListener) {
         super();
-        mMovies = movies;
+        mTrailers = trailers;
         mContext = context;
         mOnClickListener = onClickListener;
     }
 
     @Override
-    public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.rv_item_main, parent, false);
-        return new MovieViewHolder(view);
+    public TrailerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.rv_item_trailer, parent, false);
+        return new TrailerViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final MovieViewHolder holder, int position) {
-        String imagePath = mMovies.getResults()[position].getPoster();
+    public void onBindViewHolder(final TrailerViewHolder holder, int position) {
+        String imagePath = mTrailers.getResults().get(position).getThumbnail();
         Picasso.with(mContext).load(imagePath).into(holder.imageView, new Callback() {
             @Override
             public void onSuccess() {
@@ -54,27 +54,27 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public int getItemCount() {
-        return mMovies == null ? 0 : mMovies.getResults().length;
+        return mTrailers == null ? 0 : mTrailers.getResults().size();
     }
 
-    public void setNewData(MoviesJson movies) {
-        mMovies = movies;
+    public void setNewData(TrailersJson trailers) {
+        mTrailers = trailers;
         notifyDataSetChanged();
     }
 
-    class MovieViewHolder extends RecyclerView.ViewHolder{
+    class TrailerViewHolder extends RecyclerView.ViewHolder{
 
-        public ImageView imageView;
-        public ProgressBar progressBar;
+        ImageView imageView;
+        ProgressBar progressBar;
 
-        public MovieViewHolder(View itemView) {
+        TrailerViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.image);
             progressBar = itemView.findViewById(R.id.progress_bar);
             itemView.setOnClickListener(v -> {
                 if (mOnClickListener == null) return;
                 int position = this.getAdapterPosition();
-                mOnClickListener.OnClick(mMovies.getResults()[position]);
+                mOnClickListener.OnClick(mTrailers.getResults().get(position));
             });
         }
 

@@ -3,118 +3,232 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <ScrollView
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context="com.example.alex.popularmovies.DetailActivity">
 
-        <android.support.constraint.ConstraintLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context="com.example.alex.popularmovies.DetailActivity">
+            android:background="?attr/colorPrimary"
+            android:elevation="@dimen/app_bar_elevation"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="?attr/colorPrimary"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                android:elevation="@dimen/app_bar_elevation"/>
+                tools:context="com.example.alex.popularmovies.DetailActivity">
 
-            <TextView
-                android:id="@+id/original_title_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
-                android:gravity="center_vertical"
-                android:paddingBottom="@dimen/big_margin"
-                android:paddingEnd="@dimen/default_margin"
-                android:paddingStart="@dimen/default_margin"
-                android:paddingTop="@dimen/big_margin"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                tools:text="Original title" />
+                <TextView
+                    android:id="@+id/original_title_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:gravity="center_vertical"
+                    android:paddingBottom="@dimen/big_margin"
+                    android:paddingEnd="@dimen/default_margin"
+                    android:paddingStart="@dimen/default_margin"
+                    android:paddingTop="@dimen/big_margin"
+                    android:textSize="@dimen/title_text_size"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Original title" />
 
-            <ImageView
-                android:id="@+id/thumbnail_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                android:contentDescription="@string/movies_thumbnail_descriptor"
-                android:scaleType="centerInside"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/original_title_tv"
-                android:background="@android:color/darker_gray"
-                tools:layout_height="150dp"
-                tools:layout_width="100dp" />
+                <ImageView
+                    android:id="@+id/thumbnail_iv"
+                    android:layout_width="104dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:background="@android:color/darker_gray"
+                    android:contentDescription="@string/movies_thumbnail_descriptor"
+                    android:scaleType="centerInside"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/original_title_tv"
+                    tools:layout_height="150dp"
+                    tools:layout_width="100dp" />
 
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/original_title_tv" />
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/original_title_tv" />
 
-            <android.support.constraint.Barrier
-                android:id="@+id/vertical_barrier"
-                android:layout_width="@dimen/barrier_width"
-                android:layout_height="@dimen/barrier_width"
-                app:barrierDirection="end"
-                app:constraint_referenced_ids="thumbnail_iv,progress_bar_pb" />
+                <android.support.constraint.Barrier
+                    android:id="@+id/vertical_barrier"
+                    android:layout_width="@dimen/barrier_width"
+                    android:layout_height="match_parent"
+                    app:barrierDirection="end"
+                    app:constraint_referenced_ids="thumbnail_iv,progress_bar" />
 
-            <TextView
-                android:id="@+id/release_date_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/default_margin"
-                android:layout_marginStart="@dimen/big_margin"
-                android:layout_marginTop="@dimen/default_margin"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/vertical_barrier"
-                app:layout_constraintTop_toBottomOf="@+id/original_title_tv"
-                tools:text="2018" />
+                <TextView
+                    android:id="@+id/release_date_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/default_margin"
+                    android:layout_marginStart="@dimen/big_margin"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:textSize="@dimen/year_text_size"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/vertical_barrier"
+                    app:layout_constraintTop_toBottomOf="@+id/original_title_tv"
+                    tools:text="2018" />
 
-            <TextView
-                android:id="@+id/vote_average_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/default_margin"
-                android:layout_marginTop="@dimen/default_margin"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/release_date_tv"
-                app:layout_constraintTop_toBottomOf="@+id/release_date_tv"
-                tools:text="Vote" />
+                <TextView
+                    android:id="@+id/vote_average_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/default_margin"
+                    android:layout_marginTop="@dimen/default_margin"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/release_date_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/release_date_tv"
+                    tools:text="Vote" />
 
-            <android.support.constraint.Barrier
-                android:id="@+id/horizontal_barrier"
-                android:layout_width="@dimen/barrier_width"
-                android:layout_height="@dimen/barrier_width"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="thumbnail_iv,vote_average_tv" />
+                <android.support.constraint.Barrier
+                    android:id="@+id/horizontal_barrier"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/barrier_width"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="thumbnail_iv,vote_average_tv" />
 
-            <TextView
-                android:id="@+id/overview_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/default_margin"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/horizontal_barrier"
-                tools:text="Overview" />
+                <TextView
+                    android:id="@+id/overview_tv"
+                    android:layout_width="262dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:layout_marginStart="104dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/horizontal_barrier"
+                    tools:text="Overview" />
 
-            <View
-                android:id="@+id/line_v"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="@dimen/default_margin"
-                android:background="@android:color/black"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/overview_tv" />
+                <View
+                    android:id="@+id/line_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="@dimen/default_margin"
+                    android:background="@android:color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/overview_tv" />
 
-        </android.support.constraint.ConstraintLayout>
-    </ScrollView>
+                <View
+                    android:id="@+id/background_trailers_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:background="@android:color/white"
+                    app:layout_constraintBottom_toTopOf="@id/line2_v"
+                    app:layout_constraintTop_toBottomOf="@id/line_v" />
+
+                <TextView
+                    android:id="@+id/trailers_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/default_margin"
+                    android:layout_marginStart="@dimen/default_margin"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:text="@string/trailers_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/line_v" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/trailers_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/trailers_height"
+                    android:layout_margin="@dimen/default_margin"
+                    app:layout_constraintTop_toBottomOf="@id/trailers_tv" />
+
+                <ProgressBar
+                    android:id="@+id/trailers_progress_bar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@id/trailers_rv"
+                    app:layout_constraintLeft_toLeftOf="@id/trailers_rv"
+                    app:layout_constraintRight_toRightOf="@id/trailers_rv"
+                    app:layout_constraintTop_toTopOf="@id/trailers_rv" />
+
+                <View
+                    android:id="@+id/line2_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="@dimen/default_margin"
+                    android:background="@android:color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/trailers_rv" />
+
+                <View
+                    android:id="@+id/background_reviews_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="@dimen/default_margin"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:background="@android:color/white"
+                    app:layout_constraintBottom_toTopOf="@id/line3_v"
+                    app:layout_constraintTop_toBottomOf="@id/line2_v" />
+
+                <TextView
+                    android:id="@+id/reviews_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
+                    android:text="@string/reviews_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/line2_v" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/reviews_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/reviews_height"
+                    android:layout_margin="@dimen/default_margin"
+                    app:layout_constraintTop_toBottomOf="@id/reviews_tv" />
+
+                <ProgressBar
+                    android:id="@+id/reviews_progress_bar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@id/reviews_rv"
+                    app:layout_constraintLeft_toLeftOf="@id/reviews_rv"
+                    app:layout_constraintRight_toRightOf="@id/reviews_rv"
+                    app:layout_constraintTop_toTopOf="@id/reviews_rv" />
+
+                <View
+                    android:id="@+id/line3_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="@dimen/default_margin"
+                    android:background="@android:color/black"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/reviews_rv" />
+
+                <View
+                    android:id="@+id/line4_v"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="@dimen/default_margin"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/line3_v" />
+
+            </android.support.constraint.ConstraintLayout>
+        </ScrollView>
+    </android.support.constraint.ConstraintLayout>
 </layout>

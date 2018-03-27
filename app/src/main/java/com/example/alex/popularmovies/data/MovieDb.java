@@ -1,57 +1,53 @@
 package com.example.alex.popularmovies.data;
 
-import android.net.Uri;
-import android.os.Build;
-import android.support.annotation.Nullable;
-
 import com.example.alex.popularmovies.BuildConfig;
-import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+
+//Popular movies example:
+// https://api.themoviedb.org/3/movie/popular?api_key=<api_key>&language=en-US&page=1
+//Movie's Image example:
+// https://image.tmdb.org/t/p/w500/kqjL17yufvn9OVLyXYpvtyrFfak.jpg
+
+//Trailers example:
+//https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key=<api_key>&language=en-US
+
+//Youtube video example:
+// http://www.youtube.com/watch?v=GDFUdMvacI0
+//Youtube video's thumbnail  example:
+// http://img.youtube.com/vi/GDFUdMvacI0/0.jpg
 
 public class MovieDb {
 
     public static final int SORT_BY_POPULAR = 0;
     public static final int SORT_BY_TOP_RATED = 1;
 
-    @Nullable
-    public static ArrayList<Movie> getMovies(int sortOrder){
-        final String BASE_URL = "https://api.themoviedb.org/3/movie";
-        final String POPULAR_SEGMENT = "popular";
-        final String TOP_RATED_SEGMENT = "top_rated";
-        final String PARAM_KEY_API_KEY = "api_key";
-        final String API_KEY = BuildConfig.MOVIEDB_API_KEY;
+    public static final String BASE_URL = "https://api.themoviedb.org/3/movie";
+    public static final String PARAM_KEY_API_KEY = "api_key";
+    public static final String API_KEY = BuildConfig.MOVIEDB_API_KEY;
 
-        //Forming proper URL
-        Uri uri = Uri.parse(BASE_URL).buildUpon().
-                appendPath(sortOrder == SORT_BY_TOP_RATED ? TOP_RATED_SEGMENT : POPULAR_SEGMENT).
-                appendQueryParameter(PARAM_KEY_API_KEY, API_KEY).
-                build();
-        try {
-            URL url = new URL(uri.toString());
-            //Getting jsonString from URL
-            InputStream inputStream = url.openStream();
-            String jsonString = readInputStream(inputStream);
-            inputStream.close();
-            //Convert jsonString to array of Movie
-           Gson gson = new Gson();
-           MoviesDbJson moviesDbJson = gson.fromJson(jsonString, MoviesDbJson.class);
-           return arrayListFromMoviesDbJson(moviesDbJson);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    //Movies
+    public static final String POSTER_SIZE = "w342";
+    public static final String THUMBNAIL_SIZE = "w154";
+    public static final String POPULAR_SEGMENT = "popular";
+    public static final String TOP_RATED_SEGMENT = "top_rated";
+    public static final String DATE_PATTERN = "yyyy-MM-DD";
+    public static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
 
-    private static String readInputStream(InputStream inputStream) throws IOException {
+    //Trailers
+    public static final String VIDEOS_SEGMENT = "videos";
+    public static final String BASE_YOUTUBE_URL = "http://www.youtube.com/watch";
+    public static final String YOUTUBE_WATCH_KEY = "v";
+    public static final String BASE_YOUTUBE_IMAGE_URL = "http://img.youtube.com/vi/";
+    public static final String FIRST_YOUTUBE_IMAGE_SEGMENT = "0.jpg";
+
+    //Reviews
+    public static final String REVIEWS_SEGMENT = "reviews";
+
+    static String readInputStream(InputStream inputStream) throws IOException {
         final int BUFFER_LENGTH = 512;
         char[] buffer = new char[BUFFER_LENGTH];
         int readLength;
@@ -70,55 +66,5 @@ public class MovieDb {
         }
         reader.close();
         return sb.toString();
-    }
-
-    private static String getFullPosterName(String path, Boolean thumbnail) {
-        String BASE_IMAGE_URL = "http://image.tmdb.org/t/p/";
-        String POSTER_SIZE = "w342";
-        String THUMBNAIL_SIZE = "w154";
-
-        Uri uri = Uri.parse(BASE_IMAGE_URL).buildUpon().
-                appendPath(thumbnail ? THUMBNAIL_SIZE : POSTER_SIZE).
-                appendEncodedPath(path).
-                build();
-        return uri.toString();
-    }
-
-    @Nullable
-    private static Date getDateFromString(String string) {
-        final String PATTERN = "yyyy-MM-DD";
-        Date result = null;
-        try {
-            result = new SimpleDateFormat(PATTERN).parse(string);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    //Class is used for working with GSON library
-    private static class MoviesDbJson {
-        private class MovieDbJson {
-            private String original_title;
-            private String poster_path;
-            private String overview;
-            private float vote_average;
-            private String release_date;
-        }
-        private MovieDbJson[] results;
-    }
-
-    private static ArrayList<Movie> arrayListFromMoviesDbJson(MoviesDbJson moviesDbJson) {
-        ArrayList<Movie> result = new ArrayList<>();
-        for (MoviesDbJson.MovieDbJson movieDbJson : moviesDbJson.results) {
-            Movie movie = new Movie(movieDbJson.original_title,
-                    getFullPosterName(movieDbJson.poster_path, false),
-                    getFullPosterName(movieDbJson.poster_path, true),
-                    movieDbJson.overview,
-                    movieDbJson.vote_average,
-                    getDateFromString(movieDbJson.release_date));
-            result.add(movie);
-        }
-        return result;
     }
 }

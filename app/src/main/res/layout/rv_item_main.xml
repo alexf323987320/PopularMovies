@@ -2,29 +2,22 @@
 
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/light_grey"
     android:layout_margin="@dimen/small_margin">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/empty_iv_height"
-        android:layout_margin="@dimen/small_margin">
-    </View>
-
     <ImageView
-        android:id="@+id/image_iv"
+        android:id="@+id/image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="@dimen/min_poster_height"
+        android:minWidth="@dimen/min_poster_width"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
         android:contentDescription="@string/movies_thumbnail_descriptor"
         android:cropToPadding="false"
-        android:scaleType="centerInside"
-        tools:layout_height="200dp"
-        tools:layout_width="100dp" />
+        android:scaleType="centerInside" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

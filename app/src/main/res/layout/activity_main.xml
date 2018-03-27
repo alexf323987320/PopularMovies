@@ -28,9 +28,9 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/movies_rv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
-            app:layout_constraintBottom_toTopOf="@id/navigation"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ProgressBar
@@ -45,16 +45,15 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.design.widget.BottomNavigationView
-            android:id="@+id/navigation"
+            android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:elevation="@dimen/app_bar_elevation"
-            app:itemIconTint="@android:color/black"
-            app:itemTextColor="@android:color/black"
+            app:itemIconTint="@color/nav_state_list"
+            app:itemTextColor="@color/nav_state_list"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:menu="@menu/bottom_navigation"
-            tools:layout_editor_absoluteX="0dp" />
+            app:menu="@menu/bottom_navigation" />
 
     </android.support.constraint.ConstraintLayout>
 </android.support.design.widget.CoordinatorLayout>

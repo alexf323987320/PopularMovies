@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.support.design.widget.Snackbar;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -19,16 +17,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 
-import com.example.alex.popularmovies.data.Movie;
 import com.example.alex.popularmovies.data.MovieDb;
+import com.example.alex.popularmovies.data.MoviesJson;
 import com.example.alex.popularmovies.data.Prefs;
-
-import java.util.ArrayList;
 
 import static android.net.ConnectivityManager.CONNECTIVITY_ACTION;
 
@@ -39,42 +32,37 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mMoviesRv;
     private ProgressBar mProgressPar;
 
-    private ArrayList<Movie> mMovies;
-
     private final int MOVIES_LOADER_ID = 0;
     private MoviesLoaderCallbacks mMoviesLoaderCallbacks;
 
     private BroadcastReceiver mConnectionReceiver;
     private Boolean mConnectionReceiverWasCalled = false;
 
-    private class MoviesLoaderCallbacks implements LoaderManager.LoaderCallbacks<ArrayList<Movie>> {
+    private class MoviesLoaderCallbacks implements LoaderManager.LoaderCallbacks<MoviesJson> {
 
         @Override
-        public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args) {
+        public Loader<MoviesJson> onCreateLoader(int id, Bundle args) {
             return new MoviesLoader(MainActivity.this);
         }
 
         @Override
-        public void onLoadFinished(Loader<ArrayList<Movie>> loader, ArrayList<Movie> data) {
+        public void onLoadFinished(Loader<MoviesJson> loader, MoviesJson data) {
             Log.d(TAG, "onLoadFinished() called with: loader = [" + loader + "], data = [" + data + "]");
             mProgressPar.setVisibility(View.INVISIBLE);
-            mMovies = data;
-            setupRecyclerView();
+            setupRecyclerView(data);
         }
 
         @Override
-        public void onLoaderReset(Loader<ArrayList<Movie>> loader) {
+        public void onLoaderReset(Loader<MoviesJson> loader) {
         }
     }
 
-    private static class MoviesLoader extends AsyncTaskLoader<ArrayList<Movie>> {
+    private static class MoviesLoader extends AsyncTaskLoader<MoviesJson> {
 
         private final String TAG = "MoviesLoader++";
 
         //It's bad to make your own cache here, but it's a framework
-        private ArrayList<Movie> mCache;
-        //Do not start new loading before previous finished
-        private boolean mForceLoadingStarted = false;
+        private MoviesJson mCache;
 
         MoviesLoader(Context context) {
             super(context);
@@ -89,16 +77,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onForceLoad() {
-            Log.d(TAG, "onForceLoad() called - mForceLoadingStarted = " + mForceLoadingStarted);
-            if (!mForceLoadingStarted) {
-                mForceLoadingStarted = true;
-                super.onForceLoad();
-            }
-        }
-
-        @Override
-        public ArrayList<Movie> loadInBackground() {
+        public MoviesJson loadInBackground() {
             try {
                 Log.d(TAG, "loadInBackground() called - before sleep");
                 Thread.sleep(1000);
@@ -106,13 +85,12 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             Log.d(TAG, "loadInBackground() called - after sleep");
-            return MovieDb.getMovies(Prefs.getSortOrder(getContext()));
+            return MoviesJson.create(Prefs.getSortOrder(getContext()));
         }
 
         @Override
-        public void deliverResult(ArrayList<Movie> data) {
+        public void deliverResult(MoviesJson data) {
             Log.d(TAG, "deliverResult() called with: data = [" + data + "]");
-            mForceLoadingStarted = false;
             mCache = data;
             super.deliverResult(data);
         }
@@ -138,9 +116,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 //skip informing on receiver creation
-                //if otherNetwork <> null it means it's a attempt to connect, so no need to inform
+                //if otherNetwork <> null it means it's an attempt to connect, so no need to inform
                 if (mConnectionReceiverWasCalled && intent.getParcelableExtra("otherNetwork") == null) {
-                    isConnected(true, true);
+                    NetUtils.isConnected(MainActivity.this, R.id.constraint_layout, true, true);
                 } else {
                     mConnectionReceiverWasCalled = true;
                 }
@@ -148,16 +126,41 @@ public class MainActivity extends AppCompatActivity {
         };
         IntentFilter intentFilter = new IntentFilter(CONNECTIVITY_ACTION);
         registerReceiver(mConnectionReceiver, intentFilter);
+
+        //bottom navigation
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            switch(item.getItemId()) {
+                case R.id.action_favorite:
+                    return false;
+                    //TODO action favorite
+                case R.id.action_popular:
+                    if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
+                        Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_POPULAR);
+                        forceLoadMoviesLoader();
+                        return true;
+                    }
+                    return false;
+                case R.id.action_top_rated:
+                    if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
+                        Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_TOP_RATED);
+                        forceLoadMoviesLoader();
+                        return true;
+                    }
+                    return false;
+            }
+            return false;
+        });
     }
 
-    private void setupRecyclerView() {
+    private void setupRecyclerView(MoviesJson movies) {
         final int PORTRAIT_COLUMNS_COUNT = 2;
         final int LANDSCAPE_COLUMNS_COUNT = 3;
 
         MoviesAdapter adapter = (MoviesAdapter) mMoviesRv.getAdapter();
         //If adapter is null this is first initialization, else we should update only data
         if (adapter == null) {
-            MoviesAdapter moviesAdapter = new MoviesAdapter(this, mMovies, movie -> {
+            MoviesAdapter moviesAdapter = new MoviesAdapter(this, movies, movie -> {
                     Intent intent = new Intent(this, DetailActivity.class);
                     intent.putExtra(getString(R.string.parcel_key_movie), movie);
                     startActivity(intent);
@@ -166,85 +169,13 @@ public class MainActivity extends AppCompatActivity {
             mMoviesRv.setLayoutManager(new GridLayoutManager(this, columnsCount));
             mMoviesRv.setAdapter(moviesAdapter);
         } else {
-            adapter.setNewData(mMovies);
+            adapter.setNewData(movies);
         }
-    }
-
-    private boolean isConnected(boolean showPositive, boolean showNegative) {
-        boolean result;
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        if (cm == null) return false;
-        NetworkInfo ni = cm.getActiveNetworkInfo();
-        result = ni != null && ni.isConnected();
-        if (!result && showNegative) {
-                Snackbar sb = Snackbar.make(findViewById(R.id.constraint_layout), R.string.no_internet_connection, Snackbar.LENGTH_LONG);
-                sb.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-                sb.show();
-        }
-        if (result && showPositive) {
-            Snackbar sb = Snackbar.make(findViewById(R.id.constraint_layout), R.string.internet_connection_restored, Snackbar.LENGTH_LONG);
-            sb.getView().setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-            sb.show();
-        }
-        return result;
-    }
-
-    //restores spinner position according prefs
-    private void restoreSpinnerPosition(Spinner spinner){
-        int spinnerPosition;
-        @SuppressWarnings("unchecked")
-        ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinner.getAdapter();
-        if (Prefs.getSortOrder(this) == MovieDb.SORT_BY_POPULAR) {
-            spinnerPosition = adapter.getPosition(getString(R.string.sort_by_popular));
-        } else {
-            spinnerPosition = adapter.getPosition(getString(R.string.sort_by_top_rated));
-        }
-        spinner.setSelection(spinnerPosition);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
-
-        //Fill up the spinner
-        //1.get Spinner
-        MenuItem menuItem = menu.findItem(R.id.item_sort_order);
-        final Spinner spinner = (Spinner) menuItem.getActionView();
-        //2. Prepare adapter
-        ArrayList<String> dropDownList = new ArrayList<>();
-        dropDownList.add(getString(R.string.sort_by_popular));
-        dropDownList.add(getString(R.string.sort_by_top_rated));
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                dropDownList);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        //3. Restore spinner selection
-        restoreSpinnerPosition(spinner);
-        //4. On selecting new value save it to preferences
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int sortOrder;
-                if (parent.getItemAtPosition(position) == getString(R.string.sort_by_popular)) {
-                    sortOrder = MovieDb.SORT_BY_POPULAR;
-                } else {
-                    sortOrder = MovieDb.SORT_BY_TOP_RATED;
-                }
-                if (Prefs.getSortOrder(MainActivity.this) != sortOrder) {
-                    if (isConnected(false, true)) {
-                        Prefs.setSortOrder(MainActivity.this, sortOrder);
-                        forceLoadMoviesLoader();
-                    } else {
-                        restoreSpinnerPosition(spinner);
-                    }
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
         return true;
     }
 
@@ -259,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void forceLoadMoviesLoader(){
-        if (!isConnected(false, true)) return;
+        if (!NetUtils.isConnected(this, R.id.constraint_layout, false, true)) return;
         mProgressPar.setVisibility(View.VISIBLE);
         Loader loader = getSupportLoaderManager().getLoader(MOVIES_LOADER_ID);
         loader.forceLoad();

@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">Popular movies</string>
     <string name="movies_thumbnail_descriptor">Movie\'s thumbnail</string>
+    <string name="trailers_thumbnail_descriptor">Trailer\'s thumbnail</string>
+    <string name="play_button_descriptor">Play button</string>
     <string name="no_internet_connection">No internet connection!</string>
     <string name="internet_connection_restored">Internet connection restored!</string>
+    <string name="no_app">No app to handle youtube action!</string>;
 
     <string name="menu_item_refresh">Refresh</string>
     <string name="menu_item_sort_order">Sort order</string>
@@ -18,4 +21,7 @@
 
     <string name="detail_activity_title">Movie details</string>
     <string name="error_detail_activity">No data to show!</string>
+
+    <string name="trailers_label">Trailers:</string>
+    <string name="reviews_label">Reviews:</string>
 </resources>
