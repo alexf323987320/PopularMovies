@@ -24,6 +24,7 @@ public class MovieDb {
 
     public static final int SORT_BY_POPULAR = 0;
     public static final int SORT_BY_TOP_RATED = 1;
+    public static final int SORT_BY_FAVORITES = 2;
 
     public static final String BASE_URL = "https://api.themoviedb.org/3/movie";
     public static final String PARAM_KEY_API_KEY = "api_key";

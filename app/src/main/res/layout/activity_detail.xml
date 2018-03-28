@@ -13,10 +13,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrimary"
             android:elevation="@dimen/app_bar_elevation"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <ScrollView
@@ -41,7 +39,6 @@
                     android:paddingStart="@dimen/default_margin"
                     android:paddingTop="@dimen/big_margin"
                     android:textSize="@dimen/title_text_size"
-                    android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="Original title" />
 
@@ -98,6 +95,18 @@
                     app:layout_constraintTop_toBottomOf="@+id/release_date_tv"
                     tools:text="Vote" />
 
+                <ToggleButton
+                    android:id="@+id/toggleButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="@dimen/default_margin"
+                    android:background="@drawable/heart_state_list"
+                    android:checked="false"
+                    android:textOff=""
+                    android:textOn=""
+                    app:layout_constraintStart_toStartOf="@id/vote_average_tv"
+                    app:layout_constraintTop_toBottomOf="@id/vote_average_tv" />
+
                 <android.support.constraint.Barrier
                     android:id="@+id/horizontal_barrier"
                     android:layout_width="match_parent"
@@ -124,16 +133,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/overview_tv" />
 
-                <View
-                    android:id="@+id/background_trailers_v"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/default_margin"
-                    android:layout_marginTop="@dimen/default_margin"
-                    android:background="@android:color/white"
-                    app:layout_constraintBottom_toTopOf="@id/line2_v"
-                    app:layout_constraintTop_toBottomOf="@id/line_v" />
-
                 <TextView
                     android:id="@+id/trailers_tv"
                     android:layout_width="0dp"
@@ -142,6 +141,7 @@
                     android:layout_marginStart="@dimen/default_margin"
                     android:layout_marginTop="@dimen/default_margin"
                     android:text="@string/trailers_label"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/line_v" />
@@ -173,31 +173,21 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/trailers_rv" />
 
-                <View
-                    android:id="@+id/background_reviews_v"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginBottom="@dimen/default_margin"
-                    android:layout_marginTop="@dimen/default_margin"
-                    android:background="@android:color/white"
-                    app:layout_constraintBottom_toTopOf="@id/line3_v"
-                    app:layout_constraintTop_toBottomOf="@id/line2_v" />
-
                 <TextView
                     android:id="@+id/reviews_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/default_margin"
                     android:text="@string/reviews_label"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/line2_v" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/reviews_rv"
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/reviews_vp"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/reviews_height"
-                    android:layout_margin="@dimen/default_margin"
                     app:layout_constraintTop_toBottomOf="@id/reviews_tv" />
 
                 <ProgressBar
@@ -206,10 +196,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="@id/reviews_rv"
-                    app:layout_constraintLeft_toLeftOf="@id/reviews_rv"
-                    app:layout_constraintRight_toRightOf="@id/reviews_rv"
-                    app:layout_constraintTop_toTopOf="@id/reviews_rv" />
+                    app:layout_constraintBottom_toBottomOf="@id/reviews_vp"
+                    app:layout_constraintLeft_toLeftOf="@id/reviews_vp"
+                    app:layout_constraintRight_toRightOf="@id/reviews_vp"
+                    app:layout_constraintTop_toTopOf="@id/reviews_vp" />
 
                 <View
                     android:id="@+id/line3_v"
@@ -218,7 +208,7 @@
                     android:layout_margin="@dimen/default_margin"
                     android:background="@android:color/black"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/reviews_rv" />
+                    app:layout_constraintTop_toBottomOf="@id/reviews_vp" />
 
                 <View
                     android:id="@+id/line4_v"

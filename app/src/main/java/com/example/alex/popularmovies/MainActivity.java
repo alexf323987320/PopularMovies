@@ -129,10 +129,24 @@ public class MainActivity extends AppCompatActivity {
 
         //bottom navigation
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        int restoreId = 0;
+        switch (Prefs.getSortOrder(this)) {
+            case MovieDb.SORT_BY_POPULAR:
+                restoreId = R.id.action_popular;
+                break;
+            case MovieDb.SORT_BY_TOP_RATED:
+                restoreId = R.id.action_top_rated;
+                break;
+            case MovieDb.SORT_BY_FAVORITES:
+                restoreId = R.id.action_favorite;
+                break;
+        }
+        bottomNavigationView.setSelectedItemId(restoreId);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch(item.getItemId()) {
                 case R.id.action_favorite:
                     return false;
+                    //Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_FAVORITES);
                     //TODO action favorite
                 case R.id.action_popular:
                     if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {

@@ -23,5 +23,5 @@
     <string name="error_detail_activity">No data to show!</string>
 
     <string name="trailers_label">Trailers:</string>
-    <string name="reviews_label">Reviews:</string>
+    <string name="reviews_label">Reviews (%1$d/%2$d):</string>
 </resources>

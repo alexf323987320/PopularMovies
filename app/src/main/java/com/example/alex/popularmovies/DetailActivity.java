@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -106,7 +107,7 @@ public class DetailActivity extends AppCompatActivity {
         public void onLoadFinished(Loader<ReviewsJson> loader, ReviewsJson data) {
             Log.d(TAG, "onLoadFinished() called with: loader = [" + loader + "], data = [" + data + "]");
             mBinding.reviewsProgressBar.setVisibility(View.INVISIBLE);
-            setupReviewsRecyclerView(data);
+            setupReviewsViewPager(data);
         }
 
         @Override
@@ -238,16 +239,30 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    private void setupReviewsRecyclerView(ReviewsJson reviews) {
-        ReviewsAdapter adapter = (ReviewsAdapter) mBinding.reviewsRv.getAdapter();
+    private void setupReviewsViewPager(ReviewsJson reviews) {
+        ReviewsPagerAdapter adapter = (ReviewsPagerAdapter) mBinding.reviewsVp.getAdapter();
         //If adapter is null this is the first initialization, else we should update only data
         if (adapter == null) {
-            ReviewsAdapter reviewsAdapter = new ReviewsAdapter(this, reviews);
-            mBinding.reviewsRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-            mBinding.reviewsRv.setAdapter(reviewsAdapter);
+            adapter = new ReviewsPagerAdapter(getSupportFragmentManager(), reviews);
+            mBinding.reviewsVp.setAdapter(adapter);
+            mBinding.reviewsTv.setText(getString(R.string.reviews_label, Math.min(adapter.getCount(), 1), adapter.getCount()));
+            mBinding.reviewsVp.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    mBinding.reviewsTv.setText(getString(R.string.reviews_label, position + 1, mBinding.reviewsVp.getAdapter().getCount()));
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
         } else {
             adapter.setNewData(reviews);
         }
+        //TODO dynamic ViewPager height
     }
-
 }
