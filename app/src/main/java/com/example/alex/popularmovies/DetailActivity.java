@@ -3,7 +3,6 @@ package com.example.alex.popularmovies;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -16,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.alex.popularmovies.data.MovieDb;
 import com.example.alex.popularmovies.data.MovieJson;
 import com.example.alex.popularmovies.data.ReviewsJson;
 import com.example.alex.popularmovies.data.TrailersJson;
@@ -130,7 +128,6 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         protected void onStartLoading() {
-            Log.d(TAG, "onStartLoading() called - mCache = " + mCache);
             if (mCache != null) {
                 deliverResult(mCache);
             }
@@ -139,18 +136,15 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         public ReviewsJson loadInBackground() {
             try {
-                Log.d(TAG, "loadInBackground() called - before sleep");
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Log.d(TAG, "loadInBackground() called - after sleep");
             return ReviewsJson.create(mMovieId);
         }
 
         @Override
         public void deliverResult(ReviewsJson data) {
-            Log.d(TAG, "deliverResult() called with: data = [" + data + "]");
             mCache = data;
             super.deliverResult(data);
         }
@@ -167,17 +161,19 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mMovie = intent.getParcelableExtra(getString(R.string.parcel_key_movie));
         if (mMovie == null) closeWithError();
-        populateUI(mMovie);
 
         getSupportLoaderManager().initLoader(TRAILERS_LOADER_ID, null, new TrailersLoaderCallbacks());
         if (savedInstanceState == null) {
             forceLoadTrailersLoader();
         }
 
+        mBinding.reviewsTv.setText(getString(R.string.reviews_label, 0, 0));
         getSupportLoaderManager().initLoader(REVIEWS_LOADER_ID, null, new ReviewsLoaderCallbacks());
         if (savedInstanceState == null) {
             forceLoadReviewsLoader();
         }
+
+        populateUI();
     }
 
     private void closeWithError() {
@@ -185,8 +181,8 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, getString(R.string.error_detail_activity), Toast.LENGTH_LONG).show();
     }
 
-    private void populateUI(MovieJson movie) {
-        Picasso.with(this).load(movie.getThumbnail()).into(mBinding.thumbnailIv, new Callback() {
+    private void populateUI() {
+        Picasso.with(this).load(mMovie.getThumbnail()).into(mBinding.thumbnailIv, new Callback() {
             @Override
             public void onSuccess() {
                 mBinding.progressBar.setVisibility(View.INVISIBLE);
@@ -197,10 +193,32 @@ public class DetailActivity extends AppCompatActivity {
                 mBinding.progressBar.setVisibility(View.INVISIBLE);
             }
         });
-        mBinding.originalTitleTv.setText(movie.getOriginalTitle());
-        mBinding.overviewTv.setText(movie.getOverview());
-        mBinding.releaseDateTv.setText(new SimpleDateFormat("yyyy").format(movie.getReleaseDate()));
-        mBinding.voteAverageTv.setText(String.valueOf(movie.getVoteAverage()));
+        mBinding.originalTitleTv.setText(mMovie.getOriginalTitle());
+        mBinding.overviewTv.setText(mMovie.getOverview());
+        mBinding.releaseDateTv.setText(new SimpleDateFormat("yyyy").format(mMovie.getReleaseDate()));
+        mBinding.voteAverageTv.setText(String.valueOf(mMovie.getVoteAverage()));
+        //blocking call, it's ok here
+        mBinding.heartTb.setChecked(mMovie.getFavorite(this));
+        mBinding.heartTb.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            //blocking call, it's ok here
+            if (!mMovie.setFavorite(this, isChecked)) {
+                buttonView.setChecked(!isChecked);
+            }
+        });
+        mBinding.shareB.setOnClickListener(v -> {
+            TrailersAdapter adapter = (TrailersAdapter) mBinding.trailersRv.getAdapter();
+            if (adapter != null ) {
+                TrailersJson trailersJson = adapter.getTrailers();
+                if (trailersJson.getResults().size() > 0) {
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, trailersJson.getResults().get(0).getYoutubeUri().toString());
+                    sendIntent.setType("text/plain");
+                    //? sendIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
+                    startActivity(Intent.createChooser(sendIntent, getString(R.string.send_to)));
+                }
+            }
+        });
     }
 
     private void forceLoadTrailersLoader(){
@@ -222,9 +240,7 @@ public class DetailActivity extends AppCompatActivity {
         //If adapter is null this is the first initialization, else we should update only data
         if (adapter == null) {
             TrailersAdapter trailersAdapter = new TrailersAdapter(this, trailers, trailer -> {
-                Uri uri = Uri.parse(MovieDb.BASE_YOUTUBE_URL).buildUpon()
-                        .appendQueryParameter(MovieDb.YOUTUBE_WATCH_KEY, trailer.getKey()).build();
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                Intent intent = new Intent(Intent.ACTION_VIEW, trailer.getYoutubeUri());
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 } else {
@@ -263,6 +279,5 @@ public class DetailActivity extends AppCompatActivity {
         } else {
             adapter.setNewData(reviews);
         }
-        //TODO dynamic ViewPager height
     }
 }

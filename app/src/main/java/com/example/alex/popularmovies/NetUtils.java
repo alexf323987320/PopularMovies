@@ -1,6 +1,5 @@
 package com.example.alex.popularmovies;
 
-
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
@@ -8,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
-public class NetUtils {
+class NetUtils {
 
     public static boolean isConnected(AppCompatActivity activity, int constraintLayoutId, boolean showPositive, boolean showNegative) {
         boolean result;

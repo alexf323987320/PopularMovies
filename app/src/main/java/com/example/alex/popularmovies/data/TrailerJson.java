@@ -47,4 +47,9 @@ public class TrailerJson {
                 build();
         return uri.toString();
     }
+
+    public Uri getYoutubeUri() {
+        return Uri.parse(BASE_YOUTUBE_URL).buildUpon()
+                .appendQueryParameter(YOUTUBE_WATCH_KEY, getKey()).build();
+    }
 }

@@ -36,8 +36,7 @@ public class ReviewsJson {
             String jsonString = readInputStream(inputStream);
             inputStream.close();
             Gson gson = new Gson();
-            ReviewsJson result = gson.fromJson(jsonString, ReviewsJson.class);
-            return result;
+            return gson.fromJson(jsonString, ReviewsJson.class);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

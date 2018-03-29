@@ -22,6 +22,12 @@
             android:parentActivityName=".MainActivity"
             android:label="@string/detail_activity_title">
         </activity>
+        <provider
+            android:authorities="com.example.alex.popularmovies"
+            android:name=".data.FavoritesContentProvider"
+            android:exported="false">
+        </provider>
+
     </application>
 
 </manifest>

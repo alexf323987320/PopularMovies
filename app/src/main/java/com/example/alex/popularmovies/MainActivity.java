@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             Log.d(TAG, "loadInBackground() called - after sleep");
-            return MoviesJson.create(Prefs.getSortOrder(getContext()));
+            return MoviesJson.create(Prefs.getSortOrder(getContext()), getContext().getContentResolver());
         }
 
         @Override
@@ -108,7 +108,9 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportLoaderManager().initLoader(MOVIES_LOADER_ID, null, mMoviesLoaderCallbacks);
         if (savedInstanceState == null) {
-            forceLoadMoviesLoader();
+            if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
+                forceLoadMoviesLoader();
+            }
         }
 
         //broadcast receiver to inform about internet connection
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(mConnectionReceiver, intentFilter);
 
         //bottom navigation
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         int restoreId = 0;
         switch (Prefs.getSortOrder(this)) {
             case MovieDb.SORT_BY_POPULAR:
@@ -145,9 +147,11 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch(item.getItemId()) {
                 case R.id.action_favorite:
-                    return false;
-                    //Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_FAVORITES);
-                    //TODO action favorite
+                    //show if no internet connection and continue
+                    NetUtils.isConnected(this, R.id.constraint_layout, false, true);
+                    Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_FAVORITES);
+                    forceLoadMoviesLoader();
+                    return true;
                 case R.id.action_popular:
                     if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
                         Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_POPULAR);
@@ -197,14 +201,15 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_refresh:
-                forceLoadMoviesLoader();
+                if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
+                    forceLoadMoviesLoader();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void forceLoadMoviesLoader(){
-        if (!NetUtils.isConnected(this, R.id.constraint_layout, false, true)) return;
         mProgressPar.setVisibility(View.VISIBLE);
         Loader loader = getSupportLoaderManager().getLoader(MOVIES_LOADER_ID);
         loader.forceLoad();

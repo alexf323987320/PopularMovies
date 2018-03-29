@@ -5,6 +5,7 @@
     <dimen name="big_margin">24dp</dimen>
     <dimen name="min_poster_height">200dp</dimen>
     <dimen name="min_poster_width">100dp</dimen>
+    <dimen name="thumbnail_width">110dp</dimen>
     <dimen name="min_trailer_width">150dp</dimen>
     <dimen name="min_trailer_height">100dp</dimen>
     <dimen name="barrier_width">10dp</dimen>
@@ -13,8 +14,7 @@
     <dimen name="title_text_size">22sp</dimen>
     <dimen name="year_text_size">20sp</dimen>
     <dimen name="trailers_height">150dp</dimen>
-    <dimen name="reviews_height">200dp</dimen>
-    <dimen name="review_width">200dp</dimen>
-    <dimen name="trailer_width">200dp</dimen>
     <dimen name="play_button_size">70dp</dimen>
+    <dimen name="heart_button_size">40dp</dimen>
+    <dimen name="share_button_size">29dp</dimen>
 </resources>

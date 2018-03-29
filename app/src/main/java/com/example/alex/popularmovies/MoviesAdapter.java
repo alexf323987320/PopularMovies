@@ -54,7 +54,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public int getItemCount() {
-        return mMovies == null ? 0 : mMovies.getResults().length;
+        return mMovies == null || mMovies.getResults() == null ? 0 : mMovies.getResults().length;
     }
 
     public void setNewData(MoviesJson movies) {

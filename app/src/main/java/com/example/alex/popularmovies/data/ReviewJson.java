@@ -1,10 +1,5 @@
 package com.example.alex.popularmovies.data;
 
-import android.net.Uri;
-
-import static com.example.alex.popularmovies.data.MovieDb.BASE_YOUTUBE_IMAGE_URL;
-import static com.example.alex.popularmovies.data.MovieDb.FIRST_YOUTUBE_IMAGE_SEGMENT;
-
 public class ReviewJson {
 
     private String id;

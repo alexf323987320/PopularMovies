@@ -30,6 +30,10 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         mOnClickListener = onClickListener;
     }
 
+    public TrailersJson getTrailers() {
+        return mTrailers;
+    }
+
     @Override
     public TrailerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.rv_item_trailer, parent, false);

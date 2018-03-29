@@ -11,13 +11,15 @@ import android.widget.TextView;
 public class ReviewFragment extends Fragment {
 
     public static final String ARG_TEXT_KEY = "text";
+    public static final String ARG_POSITION_KEY = "position";
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
-        View view = inflater.inflate(R.layout.fragment_review, container, false);
-        ((TextView) view.findViewById(R.id.content_tv)).setText(args.getString(ARG_TEXT_KEY));
-        return view;
+        TextView textView = (TextView) inflater.inflate(R.layout.fragment_review, container, false);
+        textView.setText(args.getString(ARG_TEXT_KEY));
+        textView.setTag(args.getInt(ARG_POSITION_KEY));
+        return textView;
     }
 }
