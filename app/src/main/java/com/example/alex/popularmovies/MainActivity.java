@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onLoadFinished(Loader<MoviesJson> loader, MoviesJson data) {
             Log.d(TAG, "onLoadFinished() called with: loader = [" + loader + "], data = [" + data + "]");
-            mProgressPar.setVisibility(View.INVISIBLE);
+            //todo mProgressPar.setVisibility(View.INVISIBLE);
             setupRecyclerView(data);
         }
 
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportLoaderManager().initLoader(MOVIES_LOADER_ID, null, mMoviesLoaderCallbacks);
         if (savedInstanceState == null) {
-            if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
+            if (NetU.isConnected(this, R.id.constraint_layout, false, true)) {
                 forceLoadMoviesLoader();
             }
         }
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 //skip informing on receiver creation
                 //if otherNetwork <> null it means it's an attempt to connect, so no need to inform
                 if (mConnectionReceiverWasCalled && intent.getParcelableExtra("otherNetwork") == null) {
-                    NetUtils.isConnected(MainActivity.this, R.id.constraint_layout, true, true);
+                    NetU.isConnected(MainActivity.this, R.id.constraint_layout, true, true);
                 } else {
                     mConnectionReceiverWasCalled = true;
                 }
@@ -148,19 +148,19 @@ public class MainActivity extends AppCompatActivity {
             switch(item.getItemId()) {
                 case R.id.action_favorite:
                     //show if no internet connection and continue
-                    NetUtils.isConnected(this, R.id.constraint_layout, false, true);
+                    NetU.isConnected(this, R.id.constraint_layout, false, true);
                     Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_FAVORITES);
                     forceLoadMoviesLoader();
                     return true;
                 case R.id.action_popular:
-                    if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
+                    if (NetU.isConnected(this, R.id.constraint_layout, false, true)) {
                         Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_POPULAR);
                         forceLoadMoviesLoader();
                         return true;
                     }
                     return false;
                 case R.id.action_top_rated:
-                    if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
+                    if (NetU.isConnected(this, R.id.constraint_layout, false, true)) {
                         Prefs.setSortOrder(MainActivity.this, MovieDb.SORT_BY_TOP_RATED);
                         forceLoadMoviesLoader();
                         return true;
@@ -201,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.item_refresh:
-                if (NetUtils.isConnected(this, R.id.constraint_layout, false, true)) {
+                if (NetU.isConnected(this, R.id.constraint_layout, false, true)) {
                     forceLoadMoviesLoader();
                 }
                 return true;
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void forceLoadMoviesLoader(){
-        mProgressPar.setVisibility(View.VISIBLE);
+        //todo mProgressPar.setVisibility(View.VISIBLE);
         Loader loader = getSupportLoaderManager().getLoader(MOVIES_LOADER_ID);
         loader.forceLoad();
     }

@@ -222,14 +222,14 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void forceLoadTrailersLoader(){
-        if (!NetUtils.isConnected(this, R.id.constraint_layout, false, true)) return;
+        if (!NetU.isConnected(this, R.id.constraint_layout, false, true)) return;
         mBinding.trailersProgressBar.setVisibility(View.VISIBLE);
         Loader loader = getSupportLoaderManager().getLoader(TRAILERS_LOADER_ID);
         loader.forceLoad();
     }
 
     private void forceLoadReviewsLoader(){
-        if (!NetUtils.isConnected(this, R.id.constraint_layout, false, true)) return;
+        if (!NetU.isConnected(this, R.id.constraint_layout, false, true)) return;
         mBinding.reviewsProgressBar.setVisibility(View.VISIBLE);
         Loader loader = getSupportLoaderManager().getLoader(REVIEWS_LOADER_ID);
         loader.forceLoad();

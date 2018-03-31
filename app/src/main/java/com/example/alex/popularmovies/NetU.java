@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
-class NetUtils {
+class NetU {
 
     public static boolean isConnected(AppCompatActivity activity, int constraintLayoutId, boolean showPositive, boolean showNegative) {
         boolean result;
